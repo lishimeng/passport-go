@@ -3,7 +3,7 @@ module github.com/lishimeng/passport-go
 go 1.21.3
 
 require (
-	github.com/lib/pq v1.10.5
+	github.com/lib/pq v1.10.9
 	github.com/lishimeng/app-starter v1.18.2
 	github.com/lishimeng/go-log v1.0.0
 	github.com/lishimeng/go-sdk v1.1.0
