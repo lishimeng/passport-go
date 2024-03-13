@@ -17,7 +17,7 @@ import (
 )
 
 type WxJsCodeReq struct {
-	Code string
+	Code string `json:"code,omitempty"`
 }
 type WxLoginResp struct {
 	app.Response
@@ -35,12 +35,15 @@ func wechatSignIn(ctx server.Context) {
 	var resp WxLoginResp
 	err = ctx.C.ReadJSON(&req)
 	if err != nil {
+		log.Info(err)
 		resp.Code = tool.RespCodeError
 		ctx.Json(resp)
 		return
 	}
 
+	log.Info("wx login code: %s", req.Code)
 	if len(req.Code) == 0 {
+		log.Info("微信登录code为空")
 		resp.Code = tool.RespCodeNotFound
 		ctx.Json(resp)
 		return
@@ -51,17 +54,14 @@ func wechatSignIn(ctx server.Context) {
 	var wxClient *wechat.Client
 	err = container.Get(wxClient)
 	if err != nil {
+		log.Info(err)
 		resp.Code = tool.RespCodeError
 		ctx.Json(resp)
 		return
 	}
 	result, err := wxClient.JsCode2Session(req.Code)
-	if len(req.Code) == 0 {
-		resp.Code = tool.RespCodeNotFound
-		ctx.Json(resp)
-		return
-	}
 	if result.ErrCode != 0 {
+		log.Info("获取wx session_key失败, code: %s, err: %s", result.ErrCode, result.ErrMsg)
 		// TODO
 		resp.Code = tool.RespCodeNotFound
 		ctx.Json(resp)
@@ -72,6 +72,7 @@ func wechatSignIn(ctx server.Context) {
 	var unionId = result.UnionId
 	mfaItem, err := svsGetUnionId(unionId)
 	if err != nil {
+		log.Info(err)
 		resp.Code = tool.RespCodeSuccess
 		ctx.Json(resp)
 		return
