@@ -51,8 +51,8 @@ func wechatSignIn(ctx server.Context) {
 
 	// TODO cache重复请求(code), 至少2小时
 
-	var wxClient *wechat.Client
-	err = container.Get(wxClient)
+	var wxClient wechat.Client
+	err = container.Get(&wxClient)
 	if err != nil {
 		log.Info(err)
 		resp.Code = tool.RespCodeError

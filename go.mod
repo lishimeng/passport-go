@@ -4,10 +4,10 @@ go 1.21.3
 
 require (
 	github.com/lib/pq v1.10.9
-	github.com/lishimeng/app-starter v1.18.2
+	github.com/lishimeng/app-starter v1.18.3
 	github.com/lishimeng/go-log v1.0.0
 	github.com/lishimeng/go-sdk v1.1.0
-	github.com/lishimeng/x v1.2.0
+	github.com/lishimeng/x v1.2.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 )
 
