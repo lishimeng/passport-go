@@ -9,6 +9,7 @@ func Tables() (t []interface{}) {
 		new(SdkConfig),
 		new(UserInfo),
 		new(EnterpriseUserInfo),
+		new(Notify),
 	)
 	return
 }

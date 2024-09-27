@@ -21,3 +21,10 @@ type EnterpriseUserInfo struct {
 	Name     string `orm:"column(name)"`
 	app.TableChangeInfo
 }
+
+type NotifyType string
+
+const (
+	SmsNotifyType  NotifyType = "sms"  //短信验证
+	MailNotifyType NotifyType = "mail" //邮箱验证
+)

@@ -1,10 +1,12 @@
 package etc
 
 type Configuration struct {
-	Db    db    `toml:"db"`
-	Web   web   `toml:"web"`
-	Mq    mq    `toml:"mq"`
-	Redis redis `toml:"redis"`
+	Db     db     `toml:"db"`
+	Web    web    `toml:"web"`
+	Mq     mq     `toml:"mq"`
+	Redis  redis  `toml:"redis"`
+	Token  token  `toml:"token"`
+	Notify notify `toml:"notify"`
 }
 
 type web struct {
@@ -28,4 +30,15 @@ type db struct {
 }
 type mq struct {
 	Conn string `toml:"conn"`
+}
+type token struct {
+	Enable bool
+	Issuer string
+	Key    string
+	Ttl    int
+}
+type notify struct {
+	Host   string
+	AppKey string
+	Secret string
 }
