@@ -177,9 +177,28 @@ func register(ctx server.Context) {
 	userTable.Status = app.Enable
 	userTable.Phone = req.Mobile
 	userTable.Email = req.Email
+	userTable.Username = req.Name
+	_, err = app.GetOrm().Context.Insert(&userTable)
+	if err != nil {
+		log.Info("create user fail: %s", req.Mobile)
+		log.Info(err)
+		resp.Code = tool.RespCodeError
+		ctx.Json(resp)
+		return
+	}
+	err = app.GetOrm().Context.QueryTable(new(model.UserInfo)).
+		SetCond(cond).
+		One(&userTable)
+	if err != nil {
+		log.Info("create user fail: %s", req.Mobile)
+		log.Info(err)
+		resp.Code = tool.RespCodeError
+		ctx.Json(resp)
+		return
+	}
 	p := passwd.Generate(req.Password, userTable)
 	userTable.Password = p
-	_, err = app.GetOrm().Context.Insert(userTable)
+	_, err = app.GetOrm().Context.Update(&userTable)
 	if err != nil {
 		log.Info("create user fail: %s", req.Mobile)
 		log.Info(err)
@@ -197,4 +216,5 @@ func register(ctx server.Context) {
 	}()
 	resp.Code = tool.RespCodeSuccess
 	ctx.Json(resp)
+
 }

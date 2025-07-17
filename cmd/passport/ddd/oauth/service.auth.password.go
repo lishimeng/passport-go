@@ -1,4 +1,4 @@
-package signin
+package oauth
 
 import (
 	"github.com/beego/beego/v2/client/orm"
@@ -11,38 +11,27 @@ import (
 	"github.com/lishimeng/passport-go/internal/passwd"
 )
 
-type LoginReq struct {
-	Password  string `json:"password,omitempty"`
-	UserName  string `json:"userName,omitempty"`
-	Code      string `json:"code,omitempty"`
-	LoginType string `json:"loginType,omitempty"` //登录方式-pc/app/wx
+type PasswordReq struct {
+	UserName string `json:"userName"`
+	Password string `json:"password"`
 }
 
-type CodeLoginReq struct {
-	UserName      string `json:"userName,omitempty"`
-	Code          string `json:"code,omitempty"`
-	CodeLoginType string `json:"codeLoginType,omitempty"` //登录方式-sms/mail
-	LoginType     string `json:"loginType,omitempty"`     //登录方式-pc/app/wx
-}
-
-type LoginResp struct {
+type AuthResponse struct {
 	app.Response
-	Token string `json:"token,omitempty"`
-	Uid   int    `json:"uid,omitempty"`
+	Token string `json:"token"`
 }
 
-// 密码登录
-
-func passwdSignIn(ctx server.Context) {
-	var resp LoginResp
-	var req LoginReq
+func passwordAuth(ctx server.Context) {
+	var req PasswordReq
+	var resp AuthResponse
 	err := ctx.C.ReadJSON(&req)
 	if err != nil {
-		resp.Code = tool.RespCodeError
-		resp.Message = "json解析失败"
-		ctx.Json(resp)
+		resp.Code = 500
+		resp.Message = err.Error()
+		ctx.Json(&resp)
 		return
 	}
+
 	var info model.UserInfo
 	cond := orm.NewCondition()
 	cond = cond.And("Username", req.UserName)
@@ -61,7 +50,7 @@ func passwdSignIn(ctx server.Context) {
 		ctx.Json(resp)
 		return
 	}
-	tokenContent, err := gentoken.GenToken(info.Username, req.LoginType)
+	tokenContent, err := gentoken.GenToken(info.Username, "passportAuth")
 	if err != nil {
 		resp.Code = tool.RespCodeError
 		resp.Message = "token获取失败"
@@ -72,7 +61,8 @@ func passwdSignIn(ctx server.Context) {
 	go func() {
 		_ = gentoken.SaveToken(tokenContent)
 	}()
-	resp.Code = tool.RespCodeSuccess
+	resp.Code = 200
+	resp.Message = "success"
 	resp.Token = string(tokenContent)
-	ctx.Json(resp)
+	ctx.Json(&resp)
 }

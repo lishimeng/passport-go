@@ -8,8 +8,10 @@ func Tables() (t []interface{}) {
 		new(MfaDevice),
 		new(SdkConfig),
 		new(UserInfo),
-		new(EnterpriseUserInfo),
 		new(Notify),
+		new(Application),
+		new(Tenant),
+		new(UserAppAuth),
 	)
 	return
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/lishimeng/app-starter/tool"
 	"github.com/lishimeng/go-log"
 	"github.com/lishimeng/passport-go/internal/db/model"
+	"github.com/lishimeng/passport-go/internal/gentoken"
 )
 
 // 手机验证码登录
@@ -76,7 +77,7 @@ func smsSignIn(ctx server.Context) {
 		ctx.Json(resp)
 		return
 	}
-	tokenContent, err := getToken(info.UserCode, req.LoginType)
+	tokenContent, err := gentoken.GenToken(info.UserCode, req.LoginType)
 	if err != nil {
 		resp.Code = tool.RespCodeError
 		resp.Message = "token获取失败"
@@ -85,7 +86,7 @@ func smsSignIn(ctx server.Context) {
 	}
 	//cache token
 	go func() {
-		_ = saveToken(tokenContent)
+		_ = gentoken.SaveToken(tokenContent)
 	}()
 	resp.Code = tool.RespCodeSuccess
 	resp.Token = string(tokenContent)

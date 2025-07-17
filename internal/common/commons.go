@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+const (
+	Scope = "passport"
+)
+
 var codes = []rune("123457890")
 
 func RandCode(n int) string {
