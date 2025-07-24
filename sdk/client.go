@@ -5,8 +5,49 @@ import (
 	"github.com/lishimeng/passport-go/utils"
 )
 
+type AccessGeneratorCategory string
+
+const (
+	AuthorizeCode AccessGeneratorCategory = "code"
+	Password      AccessGeneratorCategory = "password"
+	RefreshToken  AccessGeneratorCategory = "refreshToken"
+)
+
+type AccessTokenGenerator struct {
+	Category      AccessGeneratorCategory
+	AuthorizeCode string
+	RefreshToken  string
+	UserName      string
+	Password      string
+}
+type AccessTokenGeneratorFunc func(config *AccessTokenGenerator)
+
+var WithCode = func(code string) AccessTokenGeneratorFunc {
+	return func(config *AccessTokenGenerator) {
+		config.Category = AuthorizeCode
+		config.AuthorizeCode = code
+	}
+}
+
+var WithPassword = func(userName string, password string) AccessTokenGeneratorFunc {
+	return func(config *AccessTokenGenerator) {
+		config.Category = Password
+		config.UserName = userName
+		config.Password = password
+	}
+}
+
+var WithRefreshToken = func(refreshToken string) AccessTokenGeneratorFunc {
+	return func(config *AccessTokenGenerator) {
+		config.Category = RefreshToken
+		config.RefreshToken = refreshToken
+	}
+}
+
 type Client interface {
-	PasswordAuth(req PasswordRequest) (resp AuthResponse, err error)
+	// Authorize 返回用于前端的跳转到第三方授权页面的URL
+	Authorize(callback string, scope string) (url string, err error)                // 1)
+	AccessToken(generator AccessTokenGeneratorFunc) (resp OAuthResponse, err error) //  2)
 }
 
 type Option func(*passportClient)

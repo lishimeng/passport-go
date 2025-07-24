@@ -6,9 +6,18 @@ type Response struct {
 	Message string `json:"message,omitempty"`
 }
 
-type AuthResponse struct {
+type OAuthResponse struct {
+	AccessToken string `json:"access_token,omitempty"`
+	TokenType   string `json:"token_type,omitempty"`
+	// AccessToken 的有效时间 seconds
+	ExpiresIn    int    `json:"expires_in,omitempty"`
+	RefreshToken string `json:"refresh_token,omitempty"`
+	Scope        string `json:"scope,omitempty"`
+}
+
+type _oauthResponse struct {
 	Response
-	Token string `json:"token,omitempty"`
+	OAuthResponse
 }
 
 type CredentialResponse struct {
@@ -16,4 +25,4 @@ type CredentialResponse struct {
 	Token string `json:"token,omitempty"`
 }
 
-// passport前端登录，选择tenant后，更换token 登录凭证（）
+// passport前端登录，选择tenant后，更换token （登录凭证），并且需要旧token失效
