@@ -1,0 +1,98 @@
+<div class="form-body">
+    <div class="website-logo">
+        <a href="./">
+            <div class="logo">
+            </div>
+        </a>
+    </div>
+    <div class="row">
+        <div class="img-holder">
+            <div class="bg"></div>
+            <div class="info-holder">
+
+            </div>
+        </div>
+        <div class="form-holder">
+            <div class="form-content">
+                <div class="form-items">
+                    <h3>Passport.</h3>
+                    <p>是否授权登录{{.AppName}}？</p>
+<!--                    <button id="submit" class="ibtn">确认授权</button>-->
+                    <form method="POST" action="/open/oauth2/submit">
+                        <input type="hidden" name="client_id" value="{{.ClientID}}">
+                        <input type="hidden" name="redirect_uri" value="{{.RedirectURI}}">
+                        <input type="hidden" name="response_type" value="{{.ResponseType}}">
+                        <input type="hidden" name="scope" value="{{.Scope}}">
+                        <input type="hidden" name="state" value="{{.State}}">
+                        <input type="hidden" name="token" id="token">
+                        <button type="submit">同意授权</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="static/js/jquery.min.js"></script>
+<script src="static/js/popper.min.js"></script>
+<script src="static/js/bootstrap.min.js"></script>
+<script src="static/js/main.js"></script>
+<script type="application/javascript">
+
+    let token = window.localStorage.getItem("token");
+
+    // response_type=code&
+    // client_id=CLIENT_ID&
+    // redirect_uri=CALLBACK_URL&
+    // scope=read
+    let responseType = decodeURIComponent(getQueryParam("response_type") || "");
+    let clientId = decodeURIComponent(getQueryParam("client_id") || "");
+    let redirectUri = decodeURIComponent(getQueryParam("redirect_uri") || "");
+    let scope = decodeURIComponent(getQueryParam("scope") || "");
+
+    function getQueryParam(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
+
+    $(document).ready(function () {
+        init();
+    });
+
+    async function init() {
+        checkLogin();
+    }
+
+    function checkLogin() {
+        if (!token) {
+            // 跳转到登录
+            let redirectUrl = window.location.pathname + window.location.search;
+            window.location.replace("./login?path=" + encodeURIComponent(redirectUrl))
+        } else {
+            // 检查是否token的用户信息是否有权限
+            $.ajax({
+                url: "./api/signin/checkToken",//要请求的服务器url
+                data: JSON.stringify({
+                    "referre": window.location.referrer,
+                }),
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                contentType: "application/json;charset=utf-8",
+                async: true,//是否是异步请求
+                cache: false,//是否缓存结果
+                type: "POST",//请求方式
+                dataType: "json",//服务器返回什么类型数据 text xml javascript json(javascript对象)
+                success: function (result) {//函数会在服务器执行成功后执行，result就是服务器返回结果
+                    console.log(result);
+                    if (!result || result.code !== 200) {
+                        // 无效token
+                    }
+                    $("#token").val(token);
+                },
+                error: function (xhr, status, error) {
+                    console.log("error", error);
+                }
+            });
+        }
+    }
+</script>

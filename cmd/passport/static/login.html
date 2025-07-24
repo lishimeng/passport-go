@@ -90,8 +90,9 @@
 
     function checkLogin() {
         if (token) {
+            console.log("path: ", path);
             $.ajax({
-                url: "./api/sign_in/checkToken",//要请求的服务器url
+                url: "./api/signin/checkToken",//要请求的服务器url
                 data: JSON.stringify({
                     "referre": window.location.referrer,
                 }),
@@ -104,24 +105,17 @@
                 type: "POST",//请求方式
                 dataType: "json",//服务器返回什么类型数据 text xml javascript json(javascript对象)
                 success: function (result) {//函数会在服务器执行成功后执行，result就是服务器返回结果
-                    console.log(result);
                     if (result && result.code == 200) {
                         success_prompt("您已登录！", 1000)
                         if (path) {
-                            var openUrl = '';
-                            if (path.indexOf("?") < 0) {
-                                openUrl = path + "?token=" + token
-                            } else {
-                                openUrl = path + "&token=" + token
-                            }
-                            window.location.replace(openUrl)
+                            window.location.replace(path)
                         } else {
-                            window.location.replace(nowPath + "?token=" + token);
+                            window.location.replace(nowPath);
                         }
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.log("error", error);
+                    console.log("error checking login: ", error);
                 }
             });
         }
@@ -131,7 +125,7 @@
         var username = $("#username").val();
         var password = $("#password").val();
         $.ajax({
-            url: "./api/sign_in/login",//要请求的服务器url
+            url: "./api/signin",//要请求的服务器url
             data: JSON.stringify({
                 loginType: "pc",
                 userName: username,
@@ -149,13 +143,7 @@
                     window.localStorage.setItem("token", result.token)
                     success_prompt("登录成功！", 1000)
                     if (path) {
-                        var openUrl = '';
-                        if (path.indexOf("?") < 0) {
-                            openUrl = path + "?token=" + result.token
-                        } else {
-                            openUrl = path + "&token=" + result.token
-                        }
-                        window.location.replace(openUrl)
+                        window.location.replace(path)
                     } else {
                         window.location.replace(nowPath + "?token=" + result.token);
                     }
@@ -164,7 +152,7 @@
                 }
             },
             error: function (xhr, status, error) {
-                console.log("error", error);
+                console.log("error login", error);
             }
         });
         return false

@@ -9,5 +9,9 @@ import (
 func Route(root server.Router) {
 	app.Route(root.Path("/app"))
 
+	root.Post("/submit", authorize)
+
 	root.Post("/password", midware.WithAuth(passwordAuth)...)
+	root.Post("/code", midware.WithAuth(codeAuth)...)
+	root.Post("/refreshToken", midware.WithAuth(refreshAuth)...)
 }

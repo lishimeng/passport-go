@@ -9,6 +9,7 @@ import (
 	"github.com/lishimeng/go-log"
 	"github.com/lishimeng/passport-go/internal/common"
 	"github.com/lishimeng/passport-go/internal/etc"
+	"github.com/lishimeng/passport-go/internal/gentoken"
 	"github.com/lishimeng/x/container"
 	"github.com/pkg/errors"
 )
@@ -77,7 +78,6 @@ func genCredential(ctx server.Context) {
 	}
 
 	p := token.JwtPayload{
-		Org:   c.Org,
 		Uid:   c.AppId,
 		Scope: common.Scope,
 	}
@@ -89,6 +89,8 @@ func genCredential(ctx server.Context) {
 		ctx.Json(resp)
 		return
 	}
+
+	gentoken.SaveToken(bs)
 
 	resp.Token = string(bs)
 	resp.Code = tool.RespCodeSuccess

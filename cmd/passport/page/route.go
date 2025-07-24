@@ -28,4 +28,5 @@ func Route(p server.Router) {
 	p.Get("/register", register)
 	p.Get("/forget", forget)
 	p.Get("/logout", logout)
+	p.Get("/oauth", openAuth)
 }
