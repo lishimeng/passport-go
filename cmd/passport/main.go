@@ -64,7 +64,13 @@ func _main() (err error) {
 					token.WithAlg("HS256"),
 					token.WithDefaultTTL(etc.TokenTTL),
 				)
-				storage := token.NewLocalStorage(provider)
+				var storage token.Storage
+				if etc.EnableJwtTokenCache {
+					// 使用 Redis 缓存验证 jwt token
+					storage = token.NewRedisStorage(app.GetCache())
+				} else {
+					storage = token.NewLocalStorage(provider)
+				}
 				container.Add(provider)
 				inject(storage)
 			})

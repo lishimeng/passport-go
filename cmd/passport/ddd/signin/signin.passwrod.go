@@ -61,17 +61,16 @@ func passwdSignIn(ctx server.Context) {
 		ctx.Json(resp)
 		return
 	}
-	tokenContent, err := gentoken.GenToken(info.Username, req.LoginType)
+	tokenContent, err := gentoken.GenToken(info.UserCode, req.LoginType)
 	if err != nil {
 		resp.Code = tool.RespCodeError
 		resp.Message = "token获取失败"
 		ctx.Json(resp)
 		return
 	}
-	//cache token
-	go func() {
-		_ = gentoken.SaveToken(tokenContent)
-	}()
+
+	gentoken.SaveToken(tokenContent)
+
 	resp.Code = tool.RespCodeSuccess
 	resp.Token = string(tokenContent)
 	ctx.Json(resp)
