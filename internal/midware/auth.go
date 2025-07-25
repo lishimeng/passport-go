@@ -3,6 +3,7 @@ package midware
 import (
 	"github.com/lishimeng/app-starter/midware/auth"
 	"github.com/lishimeng/app-starter/server"
+	"github.com/lishimeng/passport-go/internal/common"
 	"github.com/lishimeng/passport-go/internal/etc"
 )
 
@@ -12,7 +13,9 @@ import (
 func WithAuth(handler func(ctx server.Context)) []server.Handler {
 	var handlers []server.Handler
 	if etc.Config.Token.Enable {
-		handlers = append(handlers, auth.JwtBasic(), auth.Forbidden401Handler(auth.WithJsonResp()))
+		handlers = append(handlers,
+			auth.JwtBasic(),
+			auth.Forbidden401Handler(auth.WithJsonResp(), auth.WithScope(common.Scope)))
 	}
 	handlers = append(handlers, handler)
 	return handlers

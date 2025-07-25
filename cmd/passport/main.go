@@ -9,9 +9,11 @@ import (
 	"github.com/lishimeng/app-starter/token"
 	"github.com/lishimeng/passport-go/cmd/passport/ddd"
 	"github.com/lishimeng/passport-go/cmd/passport/setup"
+	"github.com/lishimeng/passport-go/cmd/passport/static"
 	"github.com/lishimeng/passport-go/internal/db/model"
 	"github.com/lishimeng/passport-go/internal/etc"
 	"github.com/lishimeng/x/container"
+	"net/http"
 	"time"
 )
 import _ "github.com/lib/pq"
@@ -62,7 +64,13 @@ func _main() (err error) {
 					token.WithAlg("HS256"),
 					token.WithDefaultTTL(etc.TokenTTL),
 				)
-				storage := token.NewLocalStorage(provider)
+				var storage token.Storage
+				if etc.EnableJwtTokenCache {
+					// 使用 Redis 缓存验证 jwt token
+					storage = token.NewRedisStorage(app.GetCache())
+				} else {
+					storage = token.NewLocalStorage(provider)
+				}
 				container.Add(provider)
 				inject(storage)
 			})
@@ -78,6 +86,9 @@ func _main() (err error) {
 		builder.
 			EnableDatabase(dbConfig.Build(), model.Tables()...).
 			SetWebLogLevel("debug").
+			EnableStaticWeb(func() http.FileSystem {
+				return http.FS(static.Static)
+			}).
 			EnableOrmLog().
 			EnableWeb(etc.Config.Web.Listen, ddd.Route).
 			//EnableAmqp(amqp.Connector{Conn: etc.Config.Mq.Conn}).

@@ -4,13 +4,15 @@ go 1.23
 
 require (
 	github.com/beego/beego/v2 v2.3.1
+	github.com/kataras/iris/v12 v12.2.11
 	github.com/lib/pq v1.10.9
-	github.com/lishimeng/app-starter v1.19.6
+	github.com/lishimeng/app-starter v1.20.1
 	github.com/lishimeng/go-log v1.0.0
 	github.com/lishimeng/go-sdk v1.1.0
 	github.com/lishimeng/owl-messager v0.11.3
 	github.com/lishimeng/x v1.2.3
 	github.com/patrickmn/go-cache v2.1.0+incompatible
+	github.com/pkg/errors v0.9.1
 )
 
 require (
@@ -42,7 +44,6 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kataras/blocks v0.0.8 // indirect
 	github.com/kataras/golog v0.1.11 // indirect
-	github.com/kataras/iris/v12 v12.2.11 // indirect
 	github.com/kataras/jwt v0.1.12 // indirect
 	github.com/kataras/pio v0.0.13 // indirect
 	github.com/kataras/sitemap v0.0.6 // indirect
@@ -56,7 +57,6 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.26 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
 	github.com/redis/go-redis/v9 v9.6.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect

@@ -4,7 +4,11 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"github.com/kataras/iris/v12"
 	"github.com/lishimeng/app-starter"
+	"github.com/lishimeng/app-starter/midware/template"
+	"github.com/lishimeng/go-log"
+	"github.com/lishimeng/passport-go/cmd/passport/static"
 	"github.com/lishimeng/passport-go/internal/db/model"
 	"github.com/lishimeng/passport-go/internal/sdk"
 	"github.com/lishimeng/passport-go/internal/store"
@@ -12,6 +16,7 @@ import (
 )
 
 func Setup(_ context.Context) (err error) {
+	initWebServer()
 	initStoreManager()
 	err = initSdkClient()
 	if err != nil {
@@ -27,6 +32,19 @@ func Setup(_ context.Context) (err error) {
 func initStoreManager() {
 	m := store.NewStoreManager()
 	container.Add(&m)
+}
+
+func initWebServer() {
+	AppProxy := app.GetWebServer().GetApplication()
+	if AppProxy == nil {
+		log.Info("web server nil")
+		return
+	} else {
+		log.Info("web server start", AppProxy.String())
+		engine := iris.HTML(static.Static, ".html")
+		template.Init(engine)
+		AppProxy.RegisterView(engine)
+	}
 }
 
 func initSdkClient() (err error) {
