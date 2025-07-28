@@ -15,6 +15,8 @@ const ApiCredential = "/open/oauth2/app/token"
 
 const PathOAuth = "/oauth"
 
+const PathRevoke = "/open/oauth2/revoke"
+
 const (
 	CodeNotAllow int = 401
 	CodeNotFound int = 404
@@ -30,6 +32,9 @@ type passportClient struct {
 func (p *passportClient) Authorize(callback string, scope string) (authUrl string, err error) {
 	// 拼接URL PathOAuth
 	path, err := url.JoinPath(p.host, PathOAuth)
+	if err != nil {
+		return "", err
+	}
 	authUrl = fmt.Sprintf("%s?response_type=code&client_id=%s&redirect_uri=%s&scope=%s",
 		path, p.appId, url.QueryEscape(callback), scope)
 	return
@@ -86,4 +91,19 @@ func (p *passportClient) AccessToken(generator AccessTokenGeneratorFunc) (resp O
 		err = errors.New(strconv.Itoa(response.Code) + ": " + response.Message)
 		return
 	}
+}
+
+func (p *passportClient) CancelAuthorize(refreshToken string) (err error) {
+	// 删除缓存中的refreshToken
+	var request RevokeRequest
+	var response Response
+	request.RefreshToken = refreshToken
+	err = NewRpc(p.host).Auth(p.appId, p.secret).BuildReq(func(rest *utils.RestClient) (int, error) {
+		code, e := rest.Path(PathRevoke).ResponseJson(&response).Post(request)
+		if response.Code == CodeNotAllow {
+			code = CodeNotAllow
+		}
+		return code, e
+	}).Exec()
+	return
 }

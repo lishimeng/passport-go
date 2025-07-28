@@ -48,6 +48,7 @@ type Client interface {
 	// Authorize 返回用于前端的跳转到第三方授权页面的URL
 	Authorize(callback string, scope string) (url string, err error)                // 1)
 	AccessToken(generator AccessTokenGeneratorFunc) (resp OAuthResponse, err error) //  2)
+	CancelAuthorize(refreshToken string) (err error)
 }
 
 type Option func(*passportClient)

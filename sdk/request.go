@@ -18,3 +18,7 @@ type CodeRequest struct {
 type RefreshRequest struct {
 	RefreshToken string `json:"refresh_token"`
 }
+
+type RevokeRequest struct {
+	RefreshToken string `json:"refresh_token"`
+}
