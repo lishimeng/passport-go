@@ -20,8 +20,8 @@
                     <p>Passport.</p>
                     <div class="page-links">
                         <a href="#" onclick="next('./login')" class="active">用户名密码登录</a>
-                        <a href="#" onclick="next('./phoneLogin')">手机号登录</a>
-                        <a href="#" onclick="next('./register')">手机号注册</a>
+                        <a href="#" onclick="next('./phoneLogin')" {{if .DisableSMS}}hidden{{end}}>手机号登录</a>
+                        <a href="#" onclick="next('./register')" {{if .DisableSMS}}hidden{{end}}>手机号注册</a>
                     </div>
                     <form action="#" onsubmit="return login()">
                         <input class="form-control" type="text" id="username" name="username"

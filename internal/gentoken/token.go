@@ -5,6 +5,7 @@ import (
 	"github.com/lishimeng/app-starter/token"
 	"github.com/lishimeng/go-log"
 	"github.com/lishimeng/passport-go/internal/common"
+	"github.com/lishimeng/passport-go/internal/config"
 	"github.com/lishimeng/passport-go/internal/etc"
 	"github.com/lishimeng/x/container"
 	"time"
@@ -15,7 +16,7 @@ func GenToken(uCode, loginType string) (tokenVal []byte, err error) {
 	tokenPayload.Uid = uCode
 	tokenPayload.Client = loginType
 	tokenPayload.Scope = common.Scope
-	tokenVal, err = _genWithTTL(tokenPayload, etc.TokenTTL)
+	tokenVal, err = _genWithTTL(tokenPayload, config.Config.TTL.AccessToken)
 	return
 }
 
@@ -27,7 +28,7 @@ func GenOpenToken(userCode string, appID string, org string, scope string) (toke
 	tokenPayload.Org = org
 	tokenPayload.Scope = scope
 	// 所有access token使用统一ttl，无需传入参数
-	tokenVal, err = _genWithTTL(tokenPayload, etc.TokenTTL)
+	tokenVal, err = _genWithTTL(tokenPayload, config.Config.TTL.AccessToken)
 	return
 }
 
@@ -55,11 +56,11 @@ func _genWithTTL(payload token.JwtPayload, ttl time.Duration) (content []byte, e
 
 func SaveToken(tokenContent []byte) {
 	// 只有启动了 EnableJwtTokenCache 才需要 SaveToken
-	if etc.EnableJwtTokenCache {
+	if etc.Config.Token.EnableJwtTokenCache {
 		go func() {
 			key := token.Digest(tokenContent)
-			log.Info("缓存tokenContent：%s,%s", key, etc.TokenTTL)
-			err := app.GetCache().SetTTL(key, string(tokenContent), etc.TokenTTL)
+			log.Info("缓存tokenContent：%s,%s", key, config.Config.TTL.AccessToken)
+			err := app.GetCache().SetTTL(key, string(tokenContent), config.Config.TTL.AccessToken)
 			if err != nil {
 				log.Info(err)
 			}

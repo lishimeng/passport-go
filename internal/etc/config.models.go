@@ -32,10 +32,11 @@ type mq struct {
 	Conn string `toml:"conn"`
 }
 type token struct {
-	Enable bool
-	Issuer string
-	Key    string
-	Ttl    int
+	Enable              bool
+	Issuer              string
+	Key                 string
+	Ttl                 int
+	EnableJwtTokenCache bool `toml:"enableJwtTokenCache"`
 }
 type notify struct {
 	Host   string

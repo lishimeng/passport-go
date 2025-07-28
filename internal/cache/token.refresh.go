@@ -2,6 +2,7 @@ package cache
 
 import (
 	"github.com/lishimeng/app-starter"
+	"github.com/lishimeng/go-log"
 	"time"
 )
 
@@ -25,4 +26,10 @@ func ValidateRefreshToken(refreshToken string) (data Data, err error) {
 	err = app.GetCache().Get(key, &data)
 	// 允许复用，不需要Del
 	return
+}
+
+func DeleteRefreshToken(refreshToken string) error {
+	key := "oauth_refresh_token_" + refreshToken
+	log.Debug("delete refresh token")
+	return app.GetCache().Del(key)
 }

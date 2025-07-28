@@ -9,6 +9,7 @@ import (
 	"github.com/lishimeng/app-starter/midware/template"
 	"github.com/lishimeng/go-log"
 	"github.com/lishimeng/passport-go/cmd/passport/static"
+	cfg "github.com/lishimeng/passport-go/internal/config"
 	"github.com/lishimeng/passport-go/internal/db/model"
 	"github.com/lishimeng/passport-go/internal/sdk"
 	"github.com/lishimeng/passport-go/internal/store"
@@ -48,6 +49,7 @@ func initWebServer() {
 }
 
 func initSdkClient() (err error) {
+	cfg.LoadFromDB()
 
 	var config model.SdkConfig
 	err = app.GetOrm().Context.QueryTable(new(model.SdkConfig)).One(&config)

@@ -1715,6 +1715,10 @@ input.sm-content {
     transform: rotateY(180deg);
 }
 
+.form-body .form-content .form-items .form-header {
+    font-size: 40px;
+}
+
 @keyframes zoom-in-img {
     0% {
         -webkit-transform: scale(1);

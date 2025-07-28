@@ -16,25 +16,23 @@
             <div class="form-content">
                 <div class="form-items">
                     <h3>Passport.</h3>
-                    <p>是否授权登录{{.AppName}}？</p>
-<!--                    <button id="submit" class="ibtn">确认授权</button>-->
+                    <p>请选择</p>
+                    <!--         HTML表格，后端用模板处理选项           -->
                     <form method="POST" action="/open/oauth2/submit">
                         <input type="hidden" name="client_id" value="{{.ClientID}}">
                         <input type="hidden" name="redirect_uri" value="{{.RedirectURI}}">
                         <input type="hidden" name="response_type" value="{{.ResponseType}}">
                         <input type="hidden" name="scope" value="{{.Scope}}">
                         <input type="hidden" name="state" value="{{.State}}">
-                        <input type="hidden" name="path" id="path">
                         <input type="hidden" name="token" id="token">
-                        <div class="form-button">
-                            <button type="submit" class="ibtn">确认授权</button>
-                            <!--                            <a href="./forget">忘记密码?</a>-->
-                        </div>
+                        <button type="submit">同意授权</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    <span hidden="hidden" id="path">{{.Path}}</span>
+    <span hidden="hidden" id="AppID">{{.AppID}}</span>
 </div>
 <script src="static/js/jquery.min.js"></script>
 <script src="static/js/popper.min.js"></script>
@@ -44,18 +42,65 @@
 
     let token = window.localStorage.getItem("token");
 
+    // response_type=code&
+    // client_id=CLIENT_ID&
+    // redirect_uri=CALLBACK_URL&
+    // scope=read
+    let responseType = decodeURIComponent(getQueryParam("response_type") || "");
+    let clientId = decodeURIComponent(getQueryParam("client_id") || "");
+    let redirectUri = decodeURIComponent(getQueryParam("redirect_uri") || "");
+    let scope = decodeURIComponent(getQueryParam("scope") || "");
+
+    function getQueryParam(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
+
     $(document).ready(function () {
         init();
     });
+
+
+    // 按钮点击：同意授权
+    // $("#submit").click(function () {
+    //     if (responseType === "token") {
+    //         // 隐含式，直接请求获取token
+    //         $.ajax({
+    //             url: "./api/oauth2/implicit",//要请求的服务器url
+    //             data: JSON.stringify({
+    //                 "appId": clientId,
+    //                 "scope": scope,
+    //             }),
+    //             headers: {
+    //                 "Authorization": "Bearer " + token
+    //             },
+    //             contentType: "application/json;charset=utf-8",
+    //             async: true,//是否是异步请求
+    //             cache: false,//是否缓存结果
+    //             type: "POST",//请求方式
+    //             dataType: "json",//服务器返回什么类型数据 text xml javascript json(javascript对象)
+    //             success: function (result) {//函数会在服务器执行成功后执行，result就是服务器返回结果
+    //                 if (result && result.code === 302) {
+    //                     // 回跳到redirectUri并附加token锚点
+    //                     const openUrl = redirectUri + "?token=" + result.token;
+    //                     window.location.replace(openUrl)
+    //                 }
+    //             },
+    //             error: function (xhr, status, error) {
+    //                 console.log("error", error);
+    //             }
+    //         });
+    //     }
+    // });
 
     async function init() {
         checkLogin();
     }
 
     function checkLogin() {
-        let redirectUrl = window.location.pathname + window.location.search;
         if (!token) {
             // 跳转到登录
+            let redirectUrl = window.location.pathname + window.location.search;
             window.location.replace("./login?path=" + encodeURIComponent(redirectUrl))
         } else {
             // 检查是否token的用户信息是否有权限
@@ -75,10 +120,9 @@
                 success: function (result) {//函数会在服务器执行成功后执行，result就是服务器返回结果
                     console.log(result);
                     if (!result || result.code !== 200) {
-                        window.location.replace("./logout?path=" + encodeURIComponent(redirectUrl))
+                        // 无效token
                     }
                     $("#token").val(token);
-                    $("#path").val(encodeURIComponent(redirectUrl));
                 },
                 error: function (xhr, status, error) {
                     console.log("error", error);

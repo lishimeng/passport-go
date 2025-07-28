@@ -12,6 +12,7 @@ func Tables() (t []interface{}) {
 		new(Application),
 		new(Tenant),
 		new(UserAppAuth),
+		new(Config),
 	)
 	return
 }

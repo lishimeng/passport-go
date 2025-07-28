@@ -84,13 +84,25 @@ func TestCodeAuth(t *testing.T) {
 
 func TestRefreshToken(t *testing.T) {
 	resp, err := New(
-		WithAuth("c75834b904c0d3c39cdfa25bd0919ac75ebf8d8a9c2a828795cfd08ba29ba009",
-			"5efefff775513dfe7713f51ef71a652e0968d342960454f2478f5adb894107b8"),
+		WithAuth("app_d783ed8c9b565af496beabca0cd658db8ac80f5a755a02ab0046653d664b4427",
+			"6b7533100d6e8c5a5eb8c031664c7cf256f5dd4cfde25a54bbe0b7053d19d94c"),
 		WithHost("http://127.0.0.1:80"),
-	).AccessToken(WithRefreshToken("-9YHacEMCDQM71Kw0ZVav_p7BAWUpIT3qJFwnTOK-Ns"))
+	).AccessToken(WithRefreshToken("7sLcyywnfDbggICtbzeuqxi1g90npT6Y8opOoXR7HpM"))
 	if err != nil {
 		t.Log(err)
 		t.FailNow()
 	}
 	t.Log(printStruct(resp))
+}
+
+func TestLogout(t *testing.T) {
+	err := New(
+		WithAuth("c75834b904c0d3c39cdfa25bd0919ac75ebf8d8a9c2a828795cfd08ba29ba009",
+			"5efefff775513dfe7713f51ef71a652e0968d342960454f2478f5adb894107b8"),
+		WithHost("http://127.0.0.1:80"),
+	).CancelAuthorize("-9YHacEMCDQM71Kw0ZVav_p7BAWUpIT3qJFwnTOK-Ns")
+	if err != nil {
+		t.Log(err)
+		t.FailNow()
+	}
 }

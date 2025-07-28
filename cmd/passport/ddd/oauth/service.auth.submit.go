@@ -20,6 +20,7 @@ func authorize(ctx server.Context) {
 	scope := ctx.C.FormValue("scope")
 	token := ctx.C.FormValue("token")
 	//state := ctx.C.FormValue("state")
+	path := ctx.C.FormValue("path")
 
 	callback, err := url.QueryUnescape(redirectURI)
 	if err != nil {
@@ -31,9 +32,8 @@ func authorize(ctx server.Context) {
 	// 验证token信息
 	p, err := auth.TokenStorage.Verify(token)
 	if err != nil {
-		resp.Code = tool.RespCodeError
-		resp.Message = "token verify fail"
-		ctx.Json(resp)
+		// 登录失效，跳转回登录界面
+		ctx.C.Redirect("/401?path="+path, iris.StatusFound)
 		return
 	}
 
@@ -44,9 +44,7 @@ func authorize(ctx server.Context) {
 		// 查询可用org，需要选择则可302跳转组织选择页面
 		tenants, err := service.QueryTenants(userCode, clientID)
 		if err != nil || len(tenants) == 0 {
-			resp.Code = 403
-			resp.Message = "对不起，您没有权限访问此应用"
-			ctx.Json(resp)
+			ctx.C.Redirect("/403?path="+path, iris.StatusFound)
 			return
 		}
 		c, err = cache.GenerateAuthCode(userCode, clientID, tenants[0], scope)
