@@ -1,0 +1,38 @@
+<div class="form-body">
+    <div class="website-logo">
+        <a href="./">
+            <div class="logo">
+            </div>
+        </a>
+    </div>
+    <div class="row">
+        <div class="img-holder">
+            <div class="bg"></div>
+            <div class="info-holder">
+
+            </div>
+        </div>
+        <div class="form-holder">
+            <div class="form-content">
+                <div class="form-items">
+                    <h3 class="form-header">{{.Header}}</h3>
+                    <p>{{.Info}}</p>
+                    <div class="form-button" {{if not .ShowButton}}hidden{{end}}>
+                        <button id="logout" class="ibtn" autofocus>{{.Button}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <span hidden="hidden" id="path">{{.Path}}</span>
+</div>
+<script src="static/js/jquery.min.js"></script>
+<script src="static/js/popper.min.js"></script>
+<script src="static/js/bootstrap.min.js"></script>
+<script src="static/js/main.js"></script>
+<script type="application/javascript">
+    let path = decodeURIComponent($("#path").text());
+    $('#logout').click(function() {
+        window.location.replace("./logout?path=" + encodeURIComponent(path));
+    });
+</script>

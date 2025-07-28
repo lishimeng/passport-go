@@ -3,12 +3,14 @@ package page
 import (
 	"github.com/lishimeng/app-starter/server"
 	"github.com/lishimeng/go-log"
+	"github.com/lishimeng/passport-go/internal/config"
 	"strings"
 )
 
 type loginModel struct {
 	Model
-	Path string
+	Path       string
+	DisableSMS bool
 }
 
 func login(ctx server.Context) {
@@ -17,6 +19,7 @@ func login(ctx server.Context) {
 	path := ctx.C.URLParam("path")
 	data.Title = "passport"
 	data.Path = checkParams(path)
+	data.DisableSMS = !config.Config.Page.EnableSMS
 	ctx.C.ViewLayout("layout/main")
 	err = ctx.C.View("login.html", data)
 	if err != nil {

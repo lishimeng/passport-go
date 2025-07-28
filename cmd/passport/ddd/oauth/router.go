@@ -14,4 +14,5 @@ func Route(root server.Router) {
 	root.Post("/password", midware.WithAuth(passwordAuth)...)
 	root.Post("/code", midware.WithAuth(codeAuth)...)
 	root.Post("/refreshToken", midware.WithAuth(refreshAuth)...)
+	root.Post("/revoke", midware.WithAuth(revokeAuth)...)
 }

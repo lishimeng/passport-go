@@ -5,7 +5,7 @@ import (
 	"github.com/lishimeng/app-starter/server"
 	"github.com/lishimeng/app-starter/tool"
 	"github.com/lishimeng/passport-go/internal/cache"
-	"github.com/lishimeng/passport-go/internal/etc"
+	"github.com/lishimeng/passport-go/internal/config"
 	"github.com/lishimeng/passport-go/internal/gentoken"
 )
 
@@ -50,7 +50,7 @@ func codeAuth(ctx server.Context) {
 
 	gentoken.SaveToken(tokenContent)
 
-	refreshToken, err := cache.GenerateRefreshToken(cached.UserCode, appId, cached.TenantCode, cached.Scope, etc.CodeRefreshTTL)
+	refreshToken, err := cache.GenerateRefreshToken(cached.UserCode, appId, cached.TenantCode, cached.Scope, config.Config.TTL.CodeRefreshToken)
 	if err != nil {
 		resp.Code = tool.RespCodeError
 		resp.Message = "refresh token 获取失败"
@@ -61,7 +61,7 @@ func codeAuth(ctx server.Context) {
 	resp.Message = "success"
 	resp.AccessToken = string(tokenContent)
 	resp.TokenType = "bearer"
-	resp.ExpiresIn = int(etc.TokenTTL.Seconds())
+	resp.ExpiresIn = int(config.Config.TTL.AccessToken.Seconds())
 	resp.RefreshToken = refreshToken
 	resp.Scope = cached.Scope
 	ctx.Json(&resp)

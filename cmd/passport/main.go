@@ -65,7 +65,7 @@ func _main() (err error) {
 					token.WithDefaultTTL(etc.TokenTTL),
 				)
 				var storage token.Storage
-				if etc.EnableJwtTokenCache {
+				if etc.Config.Token.EnableJwtTokenCache {
 					// 使用 Redis 缓存验证 jwt token
 					storage = token.NewRedisStorage(app.GetCache())
 				} else {

@@ -7,9 +7,9 @@ import (
 	"github.com/lishimeng/app-starter/tool"
 	"github.com/lishimeng/go-log"
 	"github.com/lishimeng/passport-go/internal/cache"
+	"github.com/lishimeng/passport-go/internal/config"
 	"github.com/lishimeng/passport-go/internal/db/model"
 	"github.com/lishimeng/passport-go/internal/db/service"
-	"github.com/lishimeng/passport-go/internal/etc"
 	"github.com/lishimeng/passport-go/internal/gentoken"
 	"github.com/lishimeng/passport-go/internal/passwd"
 )
@@ -71,7 +71,7 @@ func passwordAuth(ctx server.Context) {
 
 	gentoken.SaveToken(tokenContent)
 
-	refreshToken, err := cache.GenerateRefreshToken(info.UserCode, appId, org, passwordScope, etc.PwdRefreshTTL)
+	refreshToken, err := cache.GenerateRefreshToken(info.UserCode, appId, org, passwordScope, config.Config.TTL.PwdRefreshToken)
 	if err != nil {
 		resp.Code = tool.RespCodeError
 		resp.Message = "refresh token 获取失败"
@@ -80,7 +80,7 @@ func passwordAuth(ctx server.Context) {
 	resp.Message = "success"
 	resp.AccessToken = string(tokenContent)
 	resp.TokenType = "bearer"
-	resp.ExpiresIn = int(etc.TokenTTL.Seconds())
+	resp.ExpiresIn = int(config.Config.TTL.AccessToken.Seconds())
 	resp.RefreshToken = refreshToken
 	resp.Scope = passwordScope
 	ctx.Json(&resp)

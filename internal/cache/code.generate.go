@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"github.com/lishimeng/app-starter"
 	"github.com/lishimeng/go-log"
-	"github.com/lishimeng/passport-go/internal/etc"
+	"github.com/lishimeng/passport-go/internal/config"
 	"math/rand"
 	"time"
 )
@@ -45,6 +45,6 @@ func GenerateAuthCode(userCode string, clientCode string, tenantCode string, sco
 		TenantCode: tenantCode,
 		Scope:      scope,
 	}
-	saveCode("oauth_code_"+code, etc.CodeTTL, data)
+	saveCode("oauth_code_"+code, config.Config.TTL.Code, data)
 	return code, nil
 }

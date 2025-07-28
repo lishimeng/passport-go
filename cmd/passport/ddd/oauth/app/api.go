@@ -8,7 +8,7 @@ import (
 	"github.com/lishimeng/app-starter/tool"
 	"github.com/lishimeng/go-log"
 	"github.com/lishimeng/passport-go/internal/common"
-	"github.com/lishimeng/passport-go/internal/etc"
+	"github.com/lishimeng/passport-go/internal/config"
 	"github.com/lishimeng/passport-go/internal/gentoken"
 	"github.com/lishimeng/x/container"
 	"github.com/pkg/errors"
@@ -81,7 +81,7 @@ func genCredential(ctx server.Context) {
 		Uid:   c.AppId,
 		Scope: common.Scope,
 	}
-	bs, err := provider.GenWithTTL(p, etc.TokenTTL)
+	bs, err := provider.GenWithTTL(p, config.Config.TTL.AccessToken)
 	if err != nil {
 		log.Debug(errors.Wrap(err, "gen credential err"))
 		resp.Code = tool.RespCodeError

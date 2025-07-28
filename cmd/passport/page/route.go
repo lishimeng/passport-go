@@ -29,4 +29,7 @@ func Route(p server.Router) {
 	p.Get("/forget", forget)
 	p.Get("/logout", logout)
 	p.Get("/oauth", openAuth)
+	p.Get("/401", error401)
+	p.Get("/403", error403)
+	p.Get("/404", error404)
 }
